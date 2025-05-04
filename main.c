@@ -58,19 +58,22 @@ void vSemaforoNormal()
             // Verde ligado por 4s
             for (int t = 0; t < 4000 && !modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             // Vermelho ligado junto por 4s
             gpio_put(ledVermelho, true);
             for (int t = 0; t < 4000 && !modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             // Verde desliga, vermelho continua 4s
             gpio_put(ledVerde, false);
             for (int t = 0; t < 4000 && !modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             // Vermelho desliga
             gpio_put(ledVermelho, false);
@@ -82,7 +85,8 @@ void vSemaforoNormal()
             gpio_put(ledVermelho, true);
             for (int t = 0; t < 2000 && modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (!modoNoturno) continue;
+            if (!modoNoturno)
+                continue;
 
             gpio_put(ledVerde, false);
             gpio_put(ledVermelho, false);
@@ -101,12 +105,14 @@ void vMatrizLeds()
             set_one_led(0, 0, 20, 0); // Verde
             for (int t = 0; t < 4000 && !modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             set_one_led(1, 20, 20, 0); // Amarelo
             for (int t = 0; t < 4000 && !modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             set_one_led(2, 20, 0, 0); // Vermelho
             for (int t = 0; t < 4000 && !modoNoturno; t += 500)
@@ -117,7 +123,8 @@ void vMatrizLeds()
             set_one_led(1, 20, 20, 0); // Luz amarela ligada
             for (int t = 0; t < 2000 && modoNoturno; t += 500)
                 vTaskDelay(pdMS_TO_TICKS(500));
-            if (!modoNoturno) continue;
+            if (!modoNoturno)
+                continue;
 
             set_one_led(4, 0, 0, 0); // Apaga
             for (int t = 0; t < 2000 && modoNoturno; t += 500)
@@ -125,6 +132,7 @@ void vMatrizLeds()
         }
     }
 }
+
 void vBuzzer()
 {
     buzzer_stop(); // Garante que começa desligado
@@ -140,7 +148,8 @@ void vBuzzer()
             buzzer_stop();
             for (int t = 0; t < 3000 && !modoNoturno; t += 100)
                 vTaskDelay(pdMS_TO_TICKS(100));
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             // Beep intermitente (500 Hz, 200ms ON/OFF, total ~4s)
             for (int i = 0; i < 10 && !modoNoturno; i++)
@@ -152,7 +161,8 @@ void vBuzzer()
                 for (int t = 0; t < 200 && !modoNoturno; t += 100)
                     vTaskDelay(pdMS_TO_TICKS(100));
             }
-            if (modoNoturno) continue;
+            if (modoNoturno)
+                continue;
 
             // Beep contínuo e curto (800 Hz, 500ms ON, 1.5s OFF) ×2 = ~4s
             for (int i = 0; i < 2 && !modoNoturno; i++)
@@ -182,7 +192,83 @@ void vDisplay()
 {
     while (true)
     {
-        vTaskDelay(pdMS_TO_TICKS(1));
+        // Títulos fixos no display
+        display("VERDE", 52, 16);
+        display("AMARELO", 44, 26);
+        display("VERMELHO", 40, 36);
+
+        if (modoNoturno)
+        {
+            display("Modo Noturno", 16, 48);
+
+            // Modo noturno: amarelo piscando
+            display("^", 24, 16); // Verde apagado
+            display(">", 24, 26); // Amarelo aceso
+            display("^", 24, 36); // Vermelho apagado
+
+            // Espera responsiva por 1 segundo
+            for (int i = 0; i < 2000; i += 100)
+            {
+                if (!modoNoturno)
+                    break;
+                vTaskDelay(pdMS_TO_TICKS(100));
+            }
+            if (!modoNoturno)
+                continue;
+
+            display("^", 24, 16); // Verde apagado
+            display("^", 24, 26); // Amarelo apagado
+            display("^", 24, 36); // Vermelho apagado
+
+            for (int i = 0; i < 2000; i += 100)
+            {
+                if (!modoNoturno)
+                    break;
+                vTaskDelay(pdMS_TO_TICKS(100));
+            }
+            continue;
+        }
+        else
+        {
+            display("            ", 16, 48); // Limpa aviso "Modo Noturno"
+
+            // Verde aceso
+            display(">", 24, 16);
+            display("^", 24, 26);
+            display("^", 24, 36);
+            for (int i = 0; i < 4000; i += 100)
+            {
+                if (modoNoturno)
+                    break;
+                vTaskDelay(pdMS_TO_TICKS(100));
+            }
+            if (modoNoturno)
+                continue;
+
+            // Amarelo aceso
+            display("^", 24, 16);
+            display(">", 24, 26);
+            display("^", 24, 36);
+            for (int i = 0; i < 4000; i += 100)
+            {
+                if (modoNoturno)
+                    break;
+                vTaskDelay(pdMS_TO_TICKS(100));
+            }
+            if (modoNoturno)
+                continue;
+
+            // Vermelho aceso
+            display("^", 24, 16);
+            display("^", 24, 26);
+            display(">", 24, 36);
+            for (int i = 0; i < 4000; i += 100)
+            {
+                if (modoNoturno)
+                    break;
+                vTaskDelay(pdMS_TO_TICKS(100));
+            }
+        }
     }
 }
 
