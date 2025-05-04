@@ -33,16 +33,19 @@ bool debounce(volatile uint32_t *last_time, uint32_t debounce_time)
     return false;
 }
 
-// Função de interrupção com debouncing
-void gpio_irq_handler(uint gpio, uint32_t events)
+void vBotaoA()
 {
-    uint32_t current_time = to_us_since_boot(get_absolute_time());
-
-    // Alternar o modo noturno
-    if (gpio == botaoA && debounce(&last_time_A, 300000))
+    while (true)
     {
-        last_time_A = current_time;
-        modoNoturno = !modoNoturno;
+        uint32_t current_time = to_us_since_boot(get_absolute_time());
+
+        // Alternar o modo noturno
+        if (gpio_get(botaoA) == false && debounce(&last_time_A, 300000))
+        {
+            last_time_A = current_time;
+            modoNoturno = !modoNoturno;
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -278,8 +281,6 @@ int main()
     gpio_set_dir(botaoA, GPIO_IN);
     gpio_pull_up(botaoA);
 
-    gpio_set_irq_enabled_with_callback(botaoA, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
-
     gpio_init(ledAzul);
     gpio_set_dir(ledAzul, GPIO_OUT);
 
@@ -294,6 +295,8 @@ int main()
     initI2C();
     buzzer_init();
 
+    xTaskCreate(vBotaoA, "Botão A", configMINIMAL_STACK_SIZE,
+                NULL, tskIDLE_PRIORITY, NULL);
     xTaskCreate(vSemaforoNormal, "Semaforo Normal", configMINIMAL_STACK_SIZE,
                 NULL, tskIDLE_PRIORITY, NULL);
     xTaskCreate(vMatrizLeds, "Matriz Leds", configMINIMAL_STACK_SIZE,
