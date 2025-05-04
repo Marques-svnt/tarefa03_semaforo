@@ -35,6 +35,7 @@ add_executable(main
         lib/ssd1306.c # Biblioteca para o display OLED
         lib/display.c # Biblioteca para controle do display
         lib/pio.c     # Biblioteca pra controle da matriz 5x5
+        lib/buzzer.c  # Biblioteca para buzzer
         )
 
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR})
@@ -48,6 +49,7 @@ target_link_libraries(main
         FreeRTOS-Kernel 
         FreeRTOS-Kernel-Heap4
         hardware_pio
+        hardware_pwm
         )
 
 pico_enable_stdio_usb(main 1)
