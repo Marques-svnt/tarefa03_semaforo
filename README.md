@@ -29,7 +29,6 @@ O sistema opera em dois modos:
 ## Botões
 
 * **Botão A**: alterna entre Modo Normal e Modo Noturno (com debounce de 300ms).
-* **Botão B**: habilita o modo BOOTSEL (reset para programação).
 
 ## Requisitos de Entrega
 
