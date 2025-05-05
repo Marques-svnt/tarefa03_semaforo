@@ -6,7 +6,7 @@ Este projeto implementa um **semáforo inteligente** utilizando o microcontrolad
 * **Matriz de LEDs WS2812B** (PIO)
 * **Display OLED SSD1306** (I2C)
 * **Buzzer** (PWM)
-* **Botões** A e B (GPIO + interrupção com debounce)
+* **Botões** A (GPIO + interrupção com debounce)
 
 O sistema opera em dois modos:
 
