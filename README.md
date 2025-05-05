@@ -48,7 +48,7 @@ O sistema opera em dois modos:
 * **Matriz WS2812B** (5×5)
 * **OLED SSD1306**
 * **Buzzer** (PWM)
-* **Botões** A e B
+* **Botões** A
 
 ## Software e Ferramentas
 
